@@ -1,0 +1,1 @@
+export const paths = {	root: {		path: '',		getHref: () => '/',	},	home: {		path: '/',		getHref: () => '/',	},	/* PLOP_INJECT_PATH */} as const;

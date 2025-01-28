@@ -1,0 +1,1 @@
+import React from 'react';import { Outlet } from 'react-router';export const ErrorBoundary = () => {	return <div>Oops! Something went wrong!</div>;};const AppRoot = () => {	return (		<>			<Outlet />		</>	);};export default AppRoot;

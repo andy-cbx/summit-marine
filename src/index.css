@@ -66,3 +66,49 @@ body {
   overflow-anchor: auto;
 }
 
+.cut-out-text {
+    position: relative;
+    font-size: 100px;
+    font-weight: bold;
+    padding: 50px;
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+/*
+  Layer in between. (Black in this case.)
+    This layer is sized just a bit smaller than the
+    container to leave the `::after` visible around.
+*/
+.cut-out-text::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    z-index: -1;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    background: #000;
+}
+
+/*
+  Layer that repeats the original background
+    and appears to be the real background,
+  making it look like the text is cut out.
+*/
+.cut-out-text::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: inherit;
+    background-image: inherit;
+}

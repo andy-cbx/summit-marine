@@ -1,1 +1,0 @@
-import * as React from 'react';import { Link as RouterLink, LinkProps } from 'react-router';import { cn } from '@/utils/cn';export const Link: React.FC<LinkProps> = ({    className,    children,    ...props}: LinkProps) => {    return (        <RouterLink className={cn('w-fit', className)} {...props}>            {children}        </RouterLink>    );};

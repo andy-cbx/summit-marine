@@ -1,159 +1,143 @@
-import checkFile from "eslint-plugin-check-file";
-import globals from "globals";
-import { fixupConfigRules } from "@eslint/compat";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { fixupConfigRules } from '@eslint/compat';
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import tsParser from '@typescript-eslint/parser';
+import checkFile from 'eslint-plugin-check-file';
+import globals from 'globals';
+
+// ⬇ NEW: import the plugin directly (ESM), do NOT use compat preset
+import betterTailwind from 'eslint-plugin-better-tailwindcss';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+	baseDirectory: __dirname,
+	recommendedConfig: js.configs.recommended,
+	allConfig: js.configs.all,
 });
 
-export default [{
-    ignores: ["node_modules/*", "public/mockServiceWorker.js", "generators/*"],
-}, ...compat.extends("eslint:recommended"), {
-    plugins: {
-        "check-file": checkFile,
-    },
+export default [
+	{
+		ignores: ['node_modules/*', 'public/mockServiceWorker.js', 'generators/*'],
+	},
 
-    languageOptions: {
-        globals: {
-            ...globals.node,
-        },
+	...compat.extends('eslint:recommended'),
 
-        ecmaVersion: "latest",
-        sourceType: "module",
-    },
-}, ...fixupConfigRules(compat.extends(
-    "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended",
-    "plugin:jest-dom/recommended",
-    "plugin:tailwindcss/recommended",
-    "plugin:vitest/legacy-recommended",
-)).map(config => ({
-    ...config,
-    files: ["**/*.ts", "**/*.tsx"],
-})), {
-    files: ["**/*.ts", "**/*.tsx"],
+	{
+		plugins: {
+			'check-file': checkFile,
 
-    languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-        },
+			'better-tailwindcss': betterTailwind,
+		},
 
-        parser: tsParser,
-    },
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+			ecmaVersion: 'latest',
+			sourceType: 'module',
+		},
+	},
 
-    settings: {
-        react: {
-            version: "detect",
-        },
+	...fixupConfigRules(
+		compat.extends(
+			'eslint:recommended',
+			'plugin:import/errors',
+			'plugin:import/warnings',
+			'plugin:import/typescript',
+			'plugin:@typescript-eslint/recommended',
+			'plugin:react/recommended',
+			'plugin:react-hooks/recommended',
+			'plugin:jsx-a11y/recommended',
+			'plugin:prettier/recommended',
+			'plugin:jest-dom/recommended',
+			'plugin:vitest/legacy-recommended',
+			// 'plugin:better-tailwindcss/recommended'
+		),
+	).map((config) => ({
+		...config,
+		files: ['**/*.ts', '**/*.tsx'],
+	})),
 
-        "import/resolver": {
-            typescript: {},
-        },
-    },
+	{
+		files: ['**/*.ts', '**/*.tsx'],
 
-    rules: {
-        "import/no-restricted-paths": ["error", {
-            zones: [{
-                target: "./src/features/auth",
-                from: "./src/features",
-                except: ["./auth"],
-            }, {
-                target: "./src/features/comments",
-                from: "./src/features",
-                except: ["./comments"],
-            }, {
-                target: "./src/features/discussions",
-                from: "./src/features",
-                except: ["./discussions"],
-            }, {
-                target: "./src/features/teams",
-                from: "./src/features",
-                except: ["./teams"],
-            }, {
-                target: "./src/features/users",
-                from: "./src/features",
-                except: ["./users"],
-            }, {
-                target: "./src/features",
-                from: "./src/app",
-            }, {
-                target: [
-                    "./src/constants",
-                    "./src/components",
-                    "./src/hooks",
-                    "./src/lib",
-                    "./src/types",
-                    "./src/utils",
-                ],
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				...globals.node,
+			},
+			parser: tsParser,
+		},
 
-                from: ["./src/features", "./src/app"],
-            }],
-        }],
+		settings: {
+			react: { version: 'detect' },
+			'import/resolver': { typescript: {} },
 
-        "import/no-cycle": "error",
-        "linebreak-style": ["off", "windows"],
-        "react/prop-types": "off",
-        'endOfLine': 'off',
+			// Tailwind plugin settings
+			'better-tailwindcss': {
+				entryPoint: './src/index.css',
+				mode: 'v4',
+			},
+		},
 
-        "import/order": ["warn", {
-            groups: ["builtin", "external", "internal", "parent", "sibling", "index", "object"],
-            "newlines-between": "always",
+		rules: {
+			'import/no-restricted-paths': [
+				'error',
+				{
+					zones: [
+						{ target: './src/entities', from: ['./src/features', './src/widgets', './src/pages'] },
+						{ target: './src/features', from: ['./src/widgets', './src/pages'] },
+						{ target: './src/widgets', from: ['./src/pages'] },
+					],
+				},
+			],
 
-            alphabetize: {
-                order: "asc",
-                caseInsensitive: true,
-            },
-        }],
+			'import/no-cycle': 'error',
+			'linebreak-style': ['off', 'unix'],
+			'react/prop-types': 'off',
+			endOfLine: 'off',
 
-        "import/default": "off",
-        "import/no-named-as-default-member": "off",
-        "import/no-named-as-default": "off",
-        "react/react-in-jsx-scope": "off",
-        "jsx-a11y/anchor-is-valid": "off",
-        "@typescript-eslint/no-unused-vars": ["warn"],
-        "@typescript-eslint/explicit-function-return-type": ["off"],
-        "@typescript-eslint/explicit-module-boundary-types": ["off"],
-        "@typescript-eslint/no-empty-function": ["off"],
-        "@typescript-eslint/no-explicit-any": ["off"],
+			'import/default': 'off',
+			'import/no-named-as-default-member': 'off',
+			'import/no-named-as-default': 'off',
+			'react/react-in-jsx-scope': 'off',
+			'jsx-a11y/anchor-is-valid': 'off',
+			'@typescript-eslint/no-unused-vars': ['warn'],
+			'@typescript-eslint/explicit-function-return-type': ['off'],
+			'@typescript-eslint/explicit-module-boundary-types': ['off'],
+			'@typescript-eslint/no-empty-function': ['off'],
+			'@typescript-eslint/no-explicit-any': ['off'],
 
-        "prettier/prettier": ["warn", {}, {
-            usePrettierrc: true,
-        },
-        ],
+			'prettier/prettier': [
+				'warn',
+				{},
+				{ usePrettierrc: true },
+			],
 
-        "check-file/filename-naming-convention": ["error", {
-            "**/*.{ts,tsx}": "KEBAB_CASE",
-        }, {
-            ignoreMiddleExtensions: true,
-        }],
-    },
-}, {
-    files: ["src/**/!(__tests__)/*"],
+			'check-file/filename-naming-convention': [
+				'error',
+				{ '**/*.{ts,tsx}': 'KEBAB_CASE' },
+				{ ignoreMiddleExtensions: true },
+			],
 
-    plugins: {
-        "check-file": checkFile,
-    },
+			'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+			//'better-tailwindcss/no-deprecated-utilities': 'warn',
+		},
+	},
 
-    rules: {
-        "check-file/folder-naming-convention": ["error", {
-            "**/*": "KEBAB_CASE",
-        }],
-    },
-}];
+	{
+		files: ['src/**/!(__tests__)/*'],
+		plugins: { 'check-file': checkFile },
+		rules: {
+			'check-file/folder-naming-convention': [
+				'error',
+				{ '**/*': 'KEBAB_CASE' },
+			],
+		},
+	},
+];

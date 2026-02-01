@@ -1,11 +1,20 @@
-@tailwind base;
-@tailwind components;
+@import "tailwindcss";
+@import "tw-animate-css";
 @tailwind utilities;
 
 
-:root {
-  --swiper-pagination-color: #FFF;
-  --swiper-navigation-color: #FFF;
+@theme {
+    /* screen sizes*/
+    --breakpoint-mob: 0px;
+    --breakpoint-tab: 768px;
+    --breakpoint-des: 1280px;
+    --breakpoint-deslg: 1440px;
+    --breakpoint-desxl: 1920px;
+
+    --spacing-content: 1400px;
+
+    --color-primary-grey: #a6a8a1;
+    --color-primary-blue: #80c4cf;
 }
 
 .swiper-slide {
@@ -24,7 +33,7 @@ html {
   background-color: #fff;
   width: 100%;
   height: 100%;
-  padding: 0;
+  padding: 2rem;
   margin: 0;
   max-width: 100%;
 }
@@ -52,7 +61,7 @@ html {
 
   }
   body {
-
+      padding: 2rem
   }
 }
 
